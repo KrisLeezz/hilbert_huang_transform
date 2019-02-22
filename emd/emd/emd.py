@@ -8,6 +8,7 @@ if __name__ == "__main__":
 
 	def emd_decompose(a,t):
 		emd=EMD()
+		emd.emd(a)
 		imfs,res=emd.get_imfs_and_residue()
 		plt.plot(t,a)
 		plt.title('origin sequence')
@@ -27,14 +28,17 @@ if __name__ == "__main__":
 		return eimfs,res
 
 	#--------------------------reading data---------------------------------#
-	csvfile1=open('G:/EMD/test.csv')
+	csvfile1=open('51-126.csv')
 	csvread1=csv.reader(csvfile1)
 	x=[]
-	for row in csvfile1:
-		if row[0]!='rh':
+	n=0
+	for row in csvread1:
+		if row[0]!='TAVG':
 			x.append(row[0])
+			n=n+1
 	x=np.array(x)
 	x=x.astype(float)
+	csvfile1.close()
 
 	y=x
 
@@ -46,7 +50,7 @@ if __name__ == "__main__":
 		print '-------------------------emd decompose finish-------------------------------'
 	elif choice =='eemd':
 		EIMFS,ERES=eemd_decompose(y,t)
-		csvfile2=open('imfs.csv','wb')
+		csvfile2=open('testimfs.csv','wb')
 		csv_write2=csv.writer(csvfile2)
 		csv_write2.writerows(EIMFS)
 		csvfile2.close
