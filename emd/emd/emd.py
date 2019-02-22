@@ -1,4 +1,5 @@
 # -*- coding=utf-8 -*-
+#test
 if __name__ == "__main__":
 	import numpy as np
 	from PyEMD import EMD,EEMD,Visualisation
