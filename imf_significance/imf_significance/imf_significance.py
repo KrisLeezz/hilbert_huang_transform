@@ -7,7 +7,7 @@ from matplotlib import pyplot
 from scipy.signal import argrelextrema
 
 #----------------------读取文件------------------------------------------
-csv_file=open('C:/Users/Mason/Documents/Git/Fourier/try/try/imfs.csv','r')
+csv_file=open('C:/Users/Mason/Documents/Git/hilbert_huang_transform/CEEMDAN/CEEMDAN/imfs.csv','r')
 csv_read=csv.reader(csv_file)
 imfs=[]
 for row in csv_read:
@@ -36,10 +36,15 @@ for i in range (0,columns):
 #3.----计算每一个IMF的mean period,根据相邻的极大值确定平均周期,所有的都是局部极大值-----
 #  原代码IMF4之后采用了另外一种计算方式
 logep2=[0]*columns
+print imfs[-1]
+max_position=argrelextrema(imfs[-1], numpy.greater)
+print max_position
 for i in range(0,columns):
 	x=imfs[i]
 	max_position=argrelextrema(x, numpy.greater)#https://stackoverflow.com/questions/4624970/finding-local-maxima-minima-with-numpy-in-a-1d-numpy-array
 	temp=numpy.size(max_position)
+	if temp==0:#最后一个量可能并没有最大和最小值
+		temp=1
 	logep2[i]=nDof/temp
 print logep2
 #4.乘以转换系数，1.4427=log(e)/log(2)，自然对数？？？
