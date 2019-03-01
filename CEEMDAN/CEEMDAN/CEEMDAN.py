@@ -213,8 +213,9 @@ class CEEMDAN:
         res = S - np.sum(all_cimfs, axis=0)
         all_cimfs = np.vstack((all_cimfs,res))
         all_cimfs = all_cimfs*scale_s
+        S=S*scale_s#恢复到原始信号
 
-        return all_cimfs
+        return S,all_cimfs#包括了最后的res
 
     def end_condition(self, S, cIMFs, max_imf):
         """Test for end condition of CEEMDAN.
@@ -299,7 +300,7 @@ class CEEMDAN:
 
 if __name__ == "__main__":
 	max_imf = -1
-	csvfile1=open('51-126.csv')
+	csvfile1=open('51-126.csv','r')
 	csvread1=csv.reader(csvfile1)
 	x=[]
 	n=0
@@ -318,7 +319,7 @@ if __name__ == "__main__":
 	trials=20
 	ceemdan=CEEMDAN(trials=trials)
 
-	C_IMFs=ceemdan(S,T,max_imf)
+	S,C_IMFs=ceemdan(S,T,max_imf)#包括了最后的RES
 	imfNo=C_IMFs.shape[0]
 
 	csv_file_write=open('imfs.csv','wb')
@@ -340,7 +341,7 @@ if __name__ == "__main__":
 	plt.subplot(r,c,2)
 	plt.plot(T, S-np.sum(C_IMFs, axis=0), 'r')
 	plt.xlim((tMin, tMax))
-	plt.title("Residuum")
+	plt.title("Residuum")#信号残差
 
 	for num in range(imfNo):
 		plt.subplot(r,c,num+3)
