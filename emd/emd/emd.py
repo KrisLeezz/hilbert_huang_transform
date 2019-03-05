@@ -44,13 +44,20 @@ if __name__ == "__main__":
 
 	t=np.arange(0,len(y),1)
 
-	choice='eemd'
+	choice='emd'
 	if choice == 'emd':
 		IMFS=emd_decompose(y,t)
+		csvfile2=open('imfs.csv','wb')
+		csv_write2=csv.writer(csvfile2)
+		for i in range (0,len(IMFS[0]-1)):
+			csv_write2.writerow(IMFS[0][i])
+		#csv_write2.writerow(IMFS[-1])
+
+		csvfile2.close
 		print '-------------------------emd decompose finish-------------------------------'
 	elif choice =='eemd':
 		EIMFS,ERES=eemd_decompose(y,t)
-		csvfile2=open('testimfs.csv','wb')
+		csvfile2=open('imfs.csv','wb')
 		csv_write2=csv.writer(csvfile2)
 		csv_write2.writerows(EIMFS)
 		csvfile2.close
