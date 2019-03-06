@@ -463,7 +463,7 @@ else
 end
 end
 
-function [q, seq, t, ndir, N_dim, N, sd, sd2, tol, nbit, MAXITERATIONS, stp_crit, stp_cnt] = set_value(q, narg, varargin)
+function [q, seq, t, ndir, N_dim, N, sd, sd2, tol, nbit, MAXITERATIONS, stp_crit, stp_cnt] = set_value(x, narg, varargin)
 
 error(nargchk(1,4,narg));%参数验证
 ndir = [];
@@ -477,8 +477,8 @@ tol=[];
 prm= [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149];
 
 % Changes the input vector to double vector
-%因为从python传来的函数是list->cell
-q = double(q);
+%将Python生成的array转存为mat
+q = double(x);
 
 % Specifies maximum number of channels that can be processed by the code
 % Its maximum possible value is 32.

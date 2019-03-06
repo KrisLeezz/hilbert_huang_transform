@@ -7,7 +7,7 @@ from matplotlib import pyplot
 from scipy.signal import argrelextrema
 
 #----------------------读取文件------------------------------------------
-csv_file=open('C:/Users/Mason/Documents/Git/hilbert_huang_transform/emd/emd/imfs.csv','r')
+csv_file=open('C:\\Users\Mason\Documents\Git\hilbert_huang_transform\BEMD\BEMD\IMF1.csv','r')
 csv_read=csv.reader(csv_file)
 imfs=[]
 for row in csv_read:

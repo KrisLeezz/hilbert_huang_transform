@@ -1,11 +1,13 @@
 {
   "ExpandedNodes": [
     "",
+    "\\BEMD",
+    "\\BEMD\\BEMD",
     "\\CEEMDAN",
     "\\CEEMDAN\\CEEMDAN",
     "\\emd",
     "\\emd\\emd"
   ],
-  "SelectedNode": "\\CEEMDAN\\CEEMDAN\\CEEMDAN.py",
+  "SelectedNode": "\\BEMD\\BEMD\\BEMD.py",
   "PreviewInSolutionExplorer": false
 }
