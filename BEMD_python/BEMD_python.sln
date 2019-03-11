@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.421
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "BEMD_python", "BEMD_python\BEMD_python.pyproj", "{97C6FB36-08FA-4A45-BDCA-6B3CDEA997A1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{97C6FB36-08FA-4A45-BDCA-6B3CDEA997A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97C6FB36-08FA-4A45-BDCA-6B3CDEA997A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0EAC31C8-E63C-4A98-A345-ADEECAA629AD}
+	EndGlobalSection
+EndGlobal
