@@ -3,11 +3,13 @@
     "",
     "\\BEMD",
     "\\BEMD\\BEMD",
+    "\\BEMD_python",
+    "\\BEMD_python\\BEMD_python",
     "\\CEEMDAN",
     "\\CEEMDAN\\CEEMDAN",
     "\\emd",
     "\\emd\\emd"
   ],
-  "SelectedNode": "\\BEMD\\BEMD\\BEMD.py",
+  "SelectedNode": "\\BEMD_python\\BEMD_python\\boundary_conditions.m",
   "PreviewInSolutionExplorer": false
 }
