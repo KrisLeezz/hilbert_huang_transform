@@ -308,11 +308,16 @@ def visula(imf):
 
 	plt.figure(12)
 	n=1
+	ii=0
 	for i in range(0,numRows):
-		for ii in range (0,numCols):
+		if (imf[ii][i].all()==0):
+			break
+		else:
 			plt.subplot(numRows,numCols,n)
 			plt.plot(t,imf[ii][i])
-			#plt.subplot(numRows,numCols,nn)
+			n=n+1		
+			plt.subplot(numRows,numCols,n)
+			plt.plot(t,imf[ii+1][i])
 			n=n+1
 	plt.show()
 if __name__ == '__main__':
