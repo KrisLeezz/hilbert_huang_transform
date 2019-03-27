@@ -6,6 +6,7 @@ import matlab.engine
 import scipy.io
 import csv
 import matplotlib.pyplot as plt
+#the most several important parameters are n_dir,tol,sd,sd2，其中tol的推荐值是0.05，sd2=10*sd.
 ## This program was designed for BEMD, the reference matlab code is from ‘Rehman and Mandic’
 #There are 4 paramters at most:
 #	X,your bivariable data;
@@ -40,16 +41,21 @@ def memd(x,*args):
 	#判断是否需要进行emd分解
 	q = np.zeros((N_dim,20,N))
 	r=x
-	while stop_emd(r,seq,ndir,N_dim)!=0:
-		print('------------------------the emd should continue----------------------------')
+	j=0
+	while stop_emd(r,seq,ndir,N_dim)!=0:#外侧的大循环只靠是否有充足的极值点，按理说这里应该是判断r是否足够小，但是这个没有标准，只能用这种方法来代替，实际是判断r是不是单调的
+		print('------------------------the %d emd should continue----------------------------'%j)
 		m=r
 		#进行IMF的提取
 		#判断是否继续进行IMF的提取，即提取的IMF是否满足条件
 		if stop_crit=='stop':#三个标准
 			stop_sift,env_mean=stop_sifting(m,t,sd,sd2,tol,seq,ndir,N,N_dim)
-		#防止当前imf太小,计算精度达不到
-		if (np.max(abs(m))<np.max(abs(x))):
-			print ('forced stop of EMD : too small amplitude')
+		#防止当前imf太小,计算精度达不到,这里有点bug不符合常理
+		if (np.max(abs(m))<np.max(abs(x)*0.0000000001)):
+			if stop_sift==1:
+				print ('warning:forced stop of EMD : too small amplitude,but the shifting is continuing')
+			else: 
+				print('forced stop of EMD : too small amplitude')
+			break
 		while stop_sift==1 and nbit<MAXITERATIONS:
 			m=m-env_mean#1087,4
 			if stop_crit=='stop':
@@ -63,22 +69,22 @@ def memd(x,*args):
 			else:print('please add the size of q')
 		#q[n_imf]=m
 		n_imf = n_imf+1
-		r=r-m.T
+		r=r-m.T#提取了IMF的残差
 		nbit=0
-		
+		j=j+1
 	q[:,n_imf,:]=r.T#最后一个imf记录r
 	return q
 def stop_sifting(x,t,sd,sd2,tol,seq,ndir,N,N_dim):
 	print('-------------------------------sifting:calculate env_mean----------------------------------')
 	#计算mean
 	env_mean,nem,nzm,amp=envelope_mean(x,t,seq,ndir,N,N_dim)
-	sx= (np.sum(env_mean**2,axis=1))**0.5
+	sx= (np.sum(env_mean**2,axis=1))**0.5#因为这个是个二维的
 	if (amp.any()!=0):
 		sx=sx.reshape(-1,)
-		sx=sx/amp
-	a=sx>sd
+		sx=sx/amp #Flandrin那篇文章为什么要和振幅比？我猜想是因为避免局部有信息，局部没信息，导致IMF提取不完整
+	a=sx>sd#注意这里的sd都是取了开方的
 	aa=np.mean(a)#python的运算精度没有matlab高
-	if (((aa>tol)or any(sx>sd2))and any(nem>2)):
+	if (((aa>tol)or any(sx>sd2))and any(nem>2)):#tol相当于文章的1-阿尔法，越大越严格；sd2也是越大越严格,
 		stp=1#不满足停止条件
 	else:stp=0
 	#D=x-mean
@@ -98,7 +104,7 @@ def envelope_mean(x,t,seq,ndir,N,N_dim):#计算每个方向的包络线
 		y=math.cos(seq[it])*x[:,0]-math.sin(seq[it])*x[:,1]
 		#t=np.arange(0,len(y),1)
 		#计算投影后信号的极值
-		max_pos,max_val,min_pos,min_val,zero=local_peaks(t,y)
+		max_pos,max_val,min_pos,min_val,zero=local_peaks(t,y)#返回的下标是按照matlab的形式
 		nem[it]=len(max_pos)+len(min_pos)
 		nzm[it]=len(zero)
 		#边界条件约束
@@ -113,7 +119,7 @@ def envelope_mean(x,t,seq,ndir,N,N_dim):#计算每个方向的包络线
 			zmin=zmin.astype(float)
 			zmax=np.array(zmax)
 			zmax=zmax.astype(float)
-			tt=np.array(t)
+			tt=np.array(t+1)#因为这个变量要传到matlab里
 			tt=tt.astype(float)
 			scipy.io.savemat('tmin.mat',mdict={'tmin':tmin})
 			tminpath='tmin.mat'
@@ -131,15 +137,15 @@ def envelope_mean(x,t,seq,ndir,N,N_dim):#计算每个方向的包络线
 			env_max=eng.myspline(tmaxpath,zmaxpath,tpath)#
 			env_max=(np.array(env_max)).T
 			#计算env_mean
-			mean=env_max-env_min
+			mean=env_max-env_min#二维的，每个变量的振幅
 			mean2=mean**2
-			meansum=np.sum(mean2,axis=1)
+			meansum=np.sum(mean2,axis=1)#分量的振幅平方和=原向量振幅的平方
 			meansqrt=meansum**0.5
-			amp=amp+meansqrt/2
-			env_mean = env_mean + (env_max+env_min)/2
-			print('wati')
+			amp=amp+meansqrt/2#除以2是因为默认是对称的，只取振幅的一半与mean的形状进行比较
+			env_mean = env_mean + (env_max+env_min)/2#两个方向各自的mean部分
+			print('this is the direction %d th'%it)
 		else: count=count+1#有的方向可能没有信息了
-	if (ndir>count):#所有方向的阔线取均值
+	if (ndir>count):#所有方向的阔线和振幅取均值
 		env_mean=env_mean/(ndir-count)
 		amp=amp/(ndir-count)
 	else:print('wrong in envelope_mean')
@@ -147,12 +153,12 @@ def envelope_mean(x,t,seq,ndir,N,N_dim):#计算每个方向的包络线
 	
 
 
-def boundary_conditions(indmin,indmax,t,xx,z,nbsym):
+def boundary_conditions(indmin,indmax,t,xx,z,nbsym):#镜像对称处理两端的值
 	#这里懒得写调用matlab函数
 	#python的变量不能直接传送到matlab中
 	scipy.io.savemat('indmin.mat',mdict={'indimn':indmin})
 	scipy.io.savemat('indmax.mat',mdict={'indmax':indmax})
-	scipy.io.savemat('t.mat',mdict={'t':t})
+	scipy.io.savemat('t.mat',mdict={'t':t+1})
 	scipy.io.savemat('x.mat',mdict={'x':xx})
 	scipy.io.savemat('z.mat',mdict={'z':z})
 	scipy.io.savemat('nbsym.mat',mdict={'nbsym':nbsym})
@@ -249,7 +255,7 @@ def local_peaks(T, S):
 
     return local_max_pos+1, local_max_val, local_min_pos+1, local_min_val, indzer+1
 
-def set_value(x,num_direction=4,stop_criteria='stop',criteria_value=[0.075,0.75,0.075]):
+def set_value(x,num_direction=4,stop_criteria='stop',criteria_value=[0.075,0.75,0.05]):
 	#validate the number of parameter!!!!!!!!!!!!!!!!!!!但是这个好像没有什么作用
 	if (x.any()==None or num_direction==None or stop_criteria==None or criteria_value==None ):
 		print ('you miss some parameter')
@@ -322,7 +328,7 @@ def visula(imf):
 	plt.show()
 if __name__ == '__main__':
 	x=[]
-	csvfile=open('test3.csv','r')
+	csvfile=open('sample.csv','r')
 	csvreader=csv.reader(csvfile)
 	for i in csvreader:
 		x.append(i)

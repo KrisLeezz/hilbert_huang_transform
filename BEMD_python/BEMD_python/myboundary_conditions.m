@@ -22,6 +22,7 @@ lx = length(x);
 if (length(indmin) + length(indmax) < 3)
     mode = 0;
     tmin=NaN;tmax=NaN;zmin=NaN;zmax=NaN;
+    disp('the projected signal has inadequate extrema')
     return
 else
     mode=1; %the projected signal has inadequate extrema
