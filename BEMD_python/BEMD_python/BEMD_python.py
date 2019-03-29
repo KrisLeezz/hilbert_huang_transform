@@ -41,9 +41,9 @@ def memd(x,*args):
 	#判断是否需要进行emd分解
 	q = np.zeros((N_dim,20,N))
 	r=x
-	j=0
+	j=1
 	while stop_emd(r,seq,ndir,N_dim)!=0:#外侧的大循环只靠是否有充足的极值点，按理说这里应该是判断r是否足够小，但是这个没有标准，只能用这种方法来代替，实际是判断r是不是单调的
-		print('------------------------the %d emd should continue----------------------------'%j)
+		print('----------------------------------the %d emd should continue-------------------------------------------'%j)
 		m=r
 		#进行IMF的提取
 		#判断是否继续进行IMF的提取，即提取的IMF是否满足条件
@@ -88,7 +88,7 @@ def stop_sifting(x,t,sd,sd2,tol,seq,ndir,N,N_dim):
 		stp=1#不满足停止条件
 	else:stp=0
 	#D=x-mean
-	#判断D是否满足IMF条件，是的话IMF=D,return stp_sift=1;否的话R=X-mean，即D，再进行shifting
+	#判断D是否满足IMF条件，是的话IMF=D,return stp_sift=0;否的话R=X-mean，即D，再进行shifting
 	return stp,env_mean
 def envelope_mean(x,t,seq,ndir,N,N_dim):#计算每个方向的包络线
 	#计算包络线的均值和mode振幅的估计
@@ -143,7 +143,7 @@ def envelope_mean(x,t,seq,ndir,N,N_dim):#计算每个方向的包络线
 			meansqrt=meansum**0.5
 			amp=amp+meansqrt/2#除以2是因为默认是对称的，只取振幅的一半与mean的形状进行比较
 			env_mean = env_mean + (env_max+env_min)/2#两个方向各自的mean部分
-			print('this is the direction %d th is finished'%it+1)
+			print('this is the direction %d th is finished'%it)
 		else: count=count+1#有的方向可能没有信息了
 	if (ndir>count):#所有方向的阔线和振幅取均值
 		env_mean=env_mean/(ndir-count)
@@ -170,6 +170,7 @@ def boundary_conditions(indmin,indmax,t,xx,z,nbsym):#镜像对称处理两端的
 
 def stop_emd(x,seq,ndir,N_dim):#判断是否满足stop_emd条件,当每个方向提取的极值extream小于三个的时候，说明信息不够了，停止进行emd分解
 	#对于每一个方向，根据方向sampling的结果进行投影
+	print('whether enough extreme exist?')
 	ner=np.zeros((ndir,1))
 	for it in range(0,ndir):
 		#根据生成的投影方向进行投影
@@ -177,9 +178,12 @@ def stop_emd(x,seq,ndir,N_dim):#判断是否满足stop_emd条件,当每个方向
 		t=np.arange(0,len(y)+0,1)#创造y的位置索引,用于寻找极值的位置,第一个元素的位置是0
 		max_pos,max_val,min_pos,min_val,zero=local_peaks(t,y)#寻找极大值和极小值，返回索引和值，返回的索引下标是从1开始
 		ner[it]=len(max_pos)+len(min_pos)#记录每个方向极大值和极小值的数目
-	if (ner<3).all():#判断是否停止循环
-		stp=0#循环停止
-	else:stp=1#循环不停止
+	if (ner<3).all():#判断是否有足够的极值进行提取,all()是否全为非零元素，是的话返回1
+		stp=0
+		print('there is not enough extreme. The EMD should be ended.')
+	else:
+		stp=1#循环不停止
+		print ('Yes')
 	#stp=1#测试条件
 	return stp
 
@@ -255,7 +259,7 @@ def local_peaks(T, S):
 
     return local_max_pos+1, local_max_val, local_min_pos+1, local_min_val, indzer+1
 
-def set_value(x,num_direction=4,stop_criteria='stop',criteria_value=[0.075,0.75,0.05]):
+def set_value(x,num_direction=4,stop_criteria='stop',criteria_value=[0.05,0.5,0.05]):
 	#validate the number of parameter!!!!!!!!!!!!!!!!!!!但是这个好像没有什么作用
 	if (x.any()==None or num_direction==None or stop_criteria==None or criteria_value==None ):
 		print ('you miss some parameter')
