@@ -101,7 +101,7 @@ def envelope_mean(x,t,seq,ndir,N,N_dim):#计算每个方向的包络线
 	for it in range (0,ndir):
 		#投影
 		print('the %d direction'%(it+1))
-		y=math.cos(seq[it])*x[:,0]-math.sin(seq[it])*x[:,1]
+		y=math.cos(seq[it])*x[:,0]-math.sin(seq[it])*x[:,1]############################################
 		#t=np.arange(0,len(y),1)
 		#计算投影后信号的极值
 		max_pos,max_val,min_pos,min_val,zero=local_peaks(t,y)#返回的下标是按照matlab的形式
@@ -143,7 +143,7 @@ def envelope_mean(x,t,seq,ndir,N,N_dim):#计算每个方向的包络线
 			meansqrt=meansum**0.5
 			amp=amp+meansqrt/2#除以2是因为默认是对称的，只取振幅的一半与mean的形状进行比较
 			env_mean = env_mean + (env_max+env_min)/2#两个方向各自的mean部分
-			print('this is the direction %d th'%it)
+			print('this is the direction %d th is finished'%it+1)
 		else: count=count+1#有的方向可能没有信息了
 	if (ndir>count):#所有方向的阔线和振幅取均值
 		env_mean=env_mean/(ndir-count)
@@ -173,7 +173,7 @@ def stop_emd(x,seq,ndir,N_dim):#判断是否满足stop_emd条件,当每个方向
 	ner=np.zeros((ndir,1))
 	for it in range(0,ndir):
 		#根据生成的投影方向进行投影
-		y=math.cos(seq[it])*x[:,0]-math.sin(seq[it])*x[:,1]
+		y=math.cos(seq[it])*x[:,0]-math.sin(seq[it])*x[:,1]#################################################
 		t=np.arange(0,len(y)+0,1)#创造y的位置索引,用于寻找极值的位置,第一个元素的位置是0
 		max_pos,max_val,min_pos,min_val,zero=local_peaks(t,y)#寻找极大值和极小值，返回索引和值，返回的索引下标是从1开始
 		ner[it]=len(max_pos)+len(min_pos)#记录每个方向极大值和极小值的数目

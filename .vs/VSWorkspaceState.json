@@ -2,7 +2,6 @@
   "ExpandedNodes": [
     "",
     "\\BEMD",
-    "\\BEMD\\BEMD",
     "\\BEMD_python",
     "\\BEMD_python\\BEMD_python",
     "\\CEEMDAN",
@@ -10,6 +9,6 @@
     "\\emd",
     "\\emd\\emd"
   ],
-  "SelectedNode": "\\BEMD_python\\BEMD_python\\boundary_conditions.m",
+  "SelectedNode": "\\BEMD_python\\BEMD_python\\myboundary_conditions.m",
   "PreviewInSolutionExplorer": false
 }
