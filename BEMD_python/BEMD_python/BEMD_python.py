@@ -330,9 +330,16 @@ def visula(imf):
 			plt.plot(t,imf[ii+1][i])
 			n=n+1
 	plt.show()
+def saveIMF(imf,N_dim):
+	for i in range (0,N_dim):
+		path="IMF%i.csv"%i
+		csvsavefile=open(path,'w',newline='')
+		csvwrite=csv.writer(csvsavefile)
+		csvwrite.writerows(imf[i])
+		csvsavefile.close()
 if __name__ == '__main__':
 	x=[]
-	csvfile=open('sample.csv','r')
+	csvfile=open('sample4.csv','r')
 	csvreader=csv.reader(csvfile)
 	for i in csvreader:
 		x.append(i)
@@ -340,5 +347,6 @@ if __name__ == '__main__':
 	x=x.astype(float)
 	print('read data successfully')
 	IMF=memd(x)
+	saveIMF(IMF,2)#The N_dim is set to 2
 	visula(IMF)
 	eng.exit()
